@@ -23,12 +23,12 @@ const Login = () => {
         }
 
         try {
-            const { data } = await login(email, password);
+            const { data } = await authAPI.login(email, password);
             localStorage.setItem('userInfo', JSON.stringify(data));
             window.location.href = '/dashboard';
         } catch (err) {
-            console.error('Login error details:', err.response?.data);
-            setError(err.response?.data?.message || 'Invalid email or password');
+            console.error('Login error details:', err.response?.data || err.message || err);
+            setError(err.response?.data?.message || err.message || 'Invalid email or password');
             setLoading(false);
         }
     };
