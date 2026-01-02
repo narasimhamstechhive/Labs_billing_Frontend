@@ -1,9 +1,21 @@
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
+// Helper function to ensure HTTPS in production
+const getBaseURL = () => {
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+    
+    // If it's not localhost and uses HTTP, convert to HTTPS
+    if (apiUrl.startsWith('http://') && !apiUrl.includes('localhost')) {
+        return apiUrl.replace('http://', 'https://');
+    }
+    
+    return apiUrl;
+};
+
 // Create axios instance with base configuration
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+    baseURL: getBaseURL(),
     headers: {
         'Content-Type': 'application/json',
     },
