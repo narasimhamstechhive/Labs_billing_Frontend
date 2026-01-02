@@ -40,7 +40,7 @@ const Reports = () => {
 
     const handleApprove = async (id) => {
         try {
-            await approveResults(id);
+            await reportsAPI.approve(id);
             toast.success('Report Approved');
             fetchReports();
         } catch (err) {
@@ -68,7 +68,7 @@ const Reports = () => {
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');
             link.href = url;
-            link.setAttribute('download', `report-${sample.sampleId}.pdf`);
+            link.setAttribute('download', `report-${sample.sampleId}.html`);
             document.body.appendChild(link);
             link.click();
             link.remove();
@@ -158,7 +158,7 @@ const Reports = () => {
                                                     className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary-600 to-primary-500 text-white rounded-lg text-sm font-medium hover:from-primary-700 hover:to-primary-600 transition-all shadow-soft"
                                                 >
                                                     <Download className="w-4 h-4" />
-                                                   
+
                                                 </button>
                                             )}
                                             {isAdmin && (

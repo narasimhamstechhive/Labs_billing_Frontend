@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { testsAPI, departmentsAPI } from '../../services/api';
+import { testsAPI, departmentsAPI, getTests, getDepartments } from '../../services/api';
 import toast from 'react-hot-toast';
 import { Trash2, Edit } from 'lucide-react';
 
