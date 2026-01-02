@@ -21,7 +21,7 @@ const PatientRegistration = () => {
     const handlePrint = async (patient) => {
         const toastId = toast.loading('Finding invoice...');
         try {
-            const { data } = await getInvoices({ patientId: patient._id, limit: 1 });
+            const { data } = await billingAPI.getInvoices({ patientId: patient._id, limit: 1 });
             if (data.invoices && data.invoices.length > 0) {
                 const invoiceId = data.invoices[0]._id;
 
@@ -53,7 +53,7 @@ const PatientRegistration = () => {
                 }
             } else {
                 toast.dismiss(toastId);
-                toast.error('No invoice found for this patient', { id: toastId });
+                toast.error('This person does not have any billing records yet', { id: toastId });
             }
         } catch (error) {
             console.error('Print error:', error);
