@@ -31,11 +31,31 @@ const Header = () => {
                 console.error('Error fetching lab settings for header:', error);
             }
         };
-        
+
+        // Listen for updates from other components (like Settings)
+        const handleSettingsUpdate = () => {
+            const freshSettings = sessionStorage.getItem('labSettings');
+            if (freshSettings) {
+                try {
+                    setLabInfo(JSON.parse(freshSettings));
+                } catch (e) {
+                    fetchSettings();
+                }
+            } else {
+                fetchSettings();
+            }
+        };
+
+        window.addEventListener('labSettingsUpdated', handleSettingsUpdate);
+
         // Only fetch if not cached
         if (!cachedSettings) {
             fetchSettings();
         }
+
+        return () => {
+            window.removeEventListener('labSettingsUpdated', handleSettingsUpdate);
+        };
     }, []);
 
     const getInitials = (name) => {
@@ -88,13 +108,13 @@ const Header = () => {
                         <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center shadow-soft overflow-hidden relative">
                             {labInfo.logo ? (
                                 <>
-                                    <img 
-                                        src={labInfo.logo.startsWith('data:image') 
-                                            ? labInfo.logo 
-                                            : labInfo.logo.startsWith('http') 
-                                                ? labInfo.logo 
-                                                : `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'}${labInfo.logo}`} 
-                                        alt="Logo" 
+                                    <img
+                                        src={labInfo.logo.startsWith('data:image')
+                                            ? labInfo.logo
+                                            : labInfo.logo.startsWith('http')
+                                                ? labInfo.logo
+                                                : `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'}${labInfo.logo}`}
+                                        alt="Logo"
                                         className="w-full h-full object-cover"
                                         onError={(e) => {
                                             e.target.style.display = 'none';
@@ -129,7 +149,7 @@ const Header = () => {
 
                     <div className="flex items-center gap-4">
                         {/* Fullscreen Toggle */}
-                        <button 
+                        <button
                             onClick={toggleFullscreen}
                             className="p-2 hover:bg-gray-50 rounded-lg transition-colors group"
                             title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Save, Upload, Building2, MapPin, Phone, Mail, FileText, ShieldCheck } from 'lucide-react';
-import { settingsAPI } from '../../services/api';
+import { getSettings, settingsAPI } from '../../services/api';
 
 const Settings = () => {
     const [formData, setFormData] = useState({
@@ -96,7 +96,16 @@ const Settings = () => {
         try {
             setSaving(true);
             const response = await settingsAPI.uploadLogo(uploadFormData);
-            setFormData({ ...formData, logo: response.data.filePath });
+            const newLogoPath = response.data.filePath;
+
+            // Update local state
+            const updatedData = { ...formData, logo: newLogoPath };
+            setFormData(updatedData);
+
+            // Update cache and notify other components
+            sessionStorage.setItem('labSettings', JSON.stringify(updatedData));
+            window.dispatchEvent(new Event('labSettingsUpdated'));
+
             setMessage({ type: 'success', text: 'Logo uploaded successfully!' });
         } catch (error) {
             console.error('Error uploading logo:', error);
@@ -117,6 +126,11 @@ const Settings = () => {
         setMessage({ type: '', text: '' });
         try {
             await settingsAPI.update(formData);
+
+            // Update cache and notify other components
+            sessionStorage.setItem('labSettings', JSON.stringify(formData));
+            window.dispatchEvent(new Event('labSettingsUpdated'));
+
             setMessage({ type: 'success', text: 'Settings updated successfully!' });
             setTimeout(() => setMessage({ type: '', text: '' }), 3000);
         } catch (error) {
@@ -169,7 +183,11 @@ const Settings = () => {
                             >
                                 {formData.logo ? (
                                     <img
-                                        src={`http://127.0.0.1:5000${formData.logo}`}
+                                        src={formData.logo.startsWith('data:image')
+                                            ? formData.logo
+                                            : formData.logo.startsWith('http')
+                                                ? formData.logo
+                                                : `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'}${formData.logo}`}
                                         alt="Logo"
                                         className="w-full h-full object-contain p-2"
                                     />

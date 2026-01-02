@@ -97,7 +97,7 @@ const ResultEntry = () => {
                     ...results[testId]
                 }))
             };
-            await submitResults(payload);
+            await reportsAPI.submit(payload);
             toast.success('Results submitted successfully!');
             setSelectedSample(null);
             fetchSamples();
@@ -350,7 +350,7 @@ const ResultEntry = () => {
                                 <div className="px-2 py-2 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
                             ) : (
                                 <>
-                                    
+
                                     <span> REPORT SUBMISSION</span>
                                 </>
                             )}
